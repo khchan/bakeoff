@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "bakeoff"
+version = "0.0.1"
+description = ""
+authors = ["Kevin Chan"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+openai = "1.67"
+semantic-kernel = "1.33.0"
+azure-identity = "1.17.1"
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "6.25.2"
+jupyterlab = "4.0.6"
+"keyrings.alt" = "5.0.0"
+scikit-learn = "1.4.0"
+tiktoken = "0.5.2"
+pandas = "2.2.2"
+
+[tool.poetry.group.ci.dependencies]
+flake8-docstrings = "1.6.0"
+flake8 = "4.0.1"
+pep8-naming = "0.13.0"
+pytest-cov = "3.0.0"
+pytest-azurepipelines = "1.0.3"
+pytest-mock = "3.7.0"
+pytest = "8.3.2"
+pytest-asyncio = "0.25.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
