@@ -1,22 +1,27 @@
+[project]
+name = "bakeoff"
+version = "0.0.1"
+
 [tool.poetry]
 name = "bakeoff"
 version = "0.0.1"
 description = ""
 authors = ["Kevin Chan"]
-package-mode = false
+package-mode = true
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
 openai = "1.67"
-semantic-kernel = "1.33.0"
+semantic-kernel = { version = "1.33.0", extras = ["mcp"] }
 azure-identity = "1.17.1"
+ollama = "^0.5.1"
+chainlit = "^2.5.5"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "6.25.2"
 jupyterlab = "4.0.6"
 "keyrings.alt" = "5.0.0"
 scikit-learn = "1.4.0"
-tiktoken = "0.5.2"
 pandas = "2.2.2"
 
 [tool.poetry.group.ci.dependencies]
@@ -35,3 +40,8 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+
+[tool.uv.workspace]
+members = [
+    "mcp-server",
+]

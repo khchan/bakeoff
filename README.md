@@ -6,3 +6,7 @@ This repository contains sample notebooks for the options outlined in this [conf
 1. Ensure you have python >= 3.10
 2. Install poetry
 3. `poetry install`
+
+## Local Models with Ollama
+You can also install and configure local models with [ollama](https://ollama.com/).  
+To use a local model, you can set the model name in your `.env` file under the `LOCAL_MODEL_OVERRIDE` property.
