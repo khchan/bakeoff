@@ -1,5 +1,4 @@
 from semantic_kernel.functions.kernel_function_decorator import kernel_function
-from mql_agent import get_mql_agent
 import vena_client as vc
 
 class ModelQueryPlugin:
