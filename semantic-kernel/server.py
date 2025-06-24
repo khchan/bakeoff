@@ -33,6 +33,10 @@ async def on_app_shutdown():
 async def set_starters():
     return [
         cl.Starter(
+            label="What is the time in Tokyo?",
+            message="What is the time in Tokyo?",
+        ),
+        cl.Starter(
             label="What is top revenue across all departments in 2022 in my foundation model",
             message="What is top revenue across all departments in 2022 in my foundation model?",
         ),
@@ -46,6 +50,7 @@ async def set_starters():
 async def on_chat_start():
     thread: ChatHistoryAgentThread = ChatHistoryAgentThread(ChatHistory())
     agent = get_orchestration_agent()
+    agent.kernel.add_plugin(time_plugin)
 
     # Instantiate and add the Chainlit filter to the kernel, this will automatically capture function calls as Steps
     cl.SemanticKernelFilter(kernel=agent.kernel)
