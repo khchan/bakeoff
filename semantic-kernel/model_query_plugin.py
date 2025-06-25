@@ -1,4 +1,9 @@
 from semantic_kernel.functions.kernel_function_decorator import kernel_function
+import sys
+import os
+
+# Add the utils directory to the path to import vena_client
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'utils'))
 import vena_client as vc
 
 class ModelQueryPlugin:
@@ -11,8 +16,9 @@ class ModelQueryPlugin:
     def get_model_info(
         self, 
         id: int,
+        model_name: str,
     ) -> str:
-        return vc.get_model(id)
+        return vc.get_model(id, model_name)
 
     @kernel_function(
         description="List all available models with their basic information",

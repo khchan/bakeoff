@@ -28,7 +28,7 @@ def list_models() -> str:
         for model in data
     ]
 
-def get_model(id: int) -> str:
+def get_model(id: int, model_name: str) -> str:
     header = get_header(os.environ.get("VENA_USER"), os.environ.get("VENA_KEY"))
     response = requests.get(
         f'{os.environ.get("VENA_ENDPOINT")}/api/models/{id}/dimensions?incMembers=false&incAttributes=false',
@@ -38,15 +38,20 @@ def get_model(id: int) -> str:
         raise Exception(f"Error: Received status code {response.status_code}. Message: {response.text}")
     
     data = response.json()
-    return [
+    dimensions = [
         {
             "id": dimension['id'],
             "number": dimension['number'],
             "name": dimension['name'],
-            "typeDefinition": dimension['typeDefinition']
+            "typeDefinition": dimension['typeDefinition']['type']
         }
         for dimension in data
     ]
+    return {
+        "id": id,
+        "name": model_name,
+        "dimensions": dimensions
+    }
     
 def get_children_of_member(model_id: int, dimension_number: int, member_id: str) -> str:
     url = f'{os.environ.get("VENA_ENDPOINT")}/api/models/{model_id}/dimensions/{dimension_number}/members/{member_id}/children'

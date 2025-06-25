@@ -36,7 +36,15 @@ def get_orchestration_agent():
         name="OrchestrationAgent",
         description="A helpful assistant that routes user queries to the appropriate agent.",
         instructions="""
+        <task>
         You are a helpful assistant that routes user queries to the appropriate agent.
+        </task>
+        <tips>
+        - If don't know which model to use yet, start with the get_member_prediction function
+        - If you don't know which members to use yet, start with the get_member_prediction function
+        - If you have a list of members, use the generate_mql function to generate the appropriate Vena MQL
+        - If the user asks any follow up questions, clarify if they'd like to use the same model, members, or MQL first
+        </tips>
         """,
         plugins=[OrchestrationPlugin()]
     )

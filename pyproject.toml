@@ -7,15 +7,21 @@ name = "bakeoff"
 version = "0.0.1"
 description = ""
 authors = ["Kevin Chan"]
-package-mode = true
+package-mode = false
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
-openai = "1.67"
+openai = "1.87.0"
 semantic-kernel = { version = "1.33.0", extras = ["mcp"] }
 azure-identity = "1.17.1"
 ollama = "^0.5.1"
 chainlit = "^2.5.5"
+langgraph = "^0.4.8"
+langchain-core = "^0.3.66"
+langchain-openai = "^0.3.25"
+langchain-community = "^0.3.26"
+agno = "^1.6.4"
+openai-agents = "^0.0.19"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "6.25.2"
