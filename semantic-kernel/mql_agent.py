@@ -1,20 +1,39 @@
 from semantic_kernel.agents import ChatCompletionAgent
 from chat_service import get_chat_service
+from semantic_kernel.functions.kernel_function_decorator import kernel_function
+import sys
+import os
+
+# Add the utils directory to the path to import vena_client
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'utils'))
+import vena_client as vc
+
+class MQLValidationPlugin:
+    @kernel_function(
+        description="Validate an MQL query against a model given the model ID and MQL expression to ensure it is correct",
+        name="validate_mql"
+    )
+    def validate_mql(self, model_id: int, mql: str) -> str:
+        return vc.validate_mql(model_id, mql)
 
 def get_mql_agent():
     return ChatCompletionAgent(
         service=get_chat_service(),
         name="ModelQueryLanguageAgent",
         description="An expert FP&A assistant who writes syntactically-correct Vena MQL",
-        instructions="""
+        plugins=[MQLValidationPlugin()],
+        instructions="""### Task
     You are an expert FP&A assistant who writes syntactically-correct Vena MQL.
+    
+    ### Tips
     • MQL is *not* case-sensitive.  
     • Each dimension clause follows the pattern:
         dimension("<Dimension Name>": <Member Expression>)
     • Separate multiple dimension clauses and multiple items inside a clause with a single space.  
     • If a dimension is omitted the query assumes *all* members of that dimension.  
     • When defining a Calculated Member, omit the leading dimension("…": …) wrapper and provide only the member expression.
-
+    • You can use the validate_mql(model_id: int, mql: str) function to validate the MQL expression.
+    
     ### Components you may use
 
     1. Member — "'Member Name'"
@@ -80,5 +99,9 @@ def get_mql_agent():
     - Within the Account dimension, all members that are descendants of Net Income, except for children of Cost of Revenue.
     - The members of all other dimensions.
     - This example illustrates how the intersection operator can be used as a filter to include all members under a given parent except the children of one of its children. The same could also be achieved with the union and not operators.
+    
+    ### Expected Output Format
+    Return the MQL expression as a string with a space between each dimension clause.
+    dimension('<dimension1>': <mql expression>) dimension('<dimension2>': <mql expression>) ...
     """
     )

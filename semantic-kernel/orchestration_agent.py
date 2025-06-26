@@ -4,8 +4,37 @@ from member_prediction_agent import get_member_prediction_agent
 from semantic_kernel.agents import ChatCompletionAgent
 from chat_service import get_chat_service
 import chainlit as cl
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'utils'))
+import vena_client as vc
 
 class OrchestrationPlugin:
+    
+    @kernel_function(
+        description="Get information about a specific model by its ID",
+        name="get_model_info"
+    )
+    def get_model_info(
+        self, 
+        id: int,
+        model_name: str,
+    ) -> str:
+        return vc.get_model(id, model_name)
+
+    @kernel_function(
+        description="List all available models with their basic information",
+        name="list_models"
+    )
+    def list_models(self) -> str:
+        """
+        List all available models with their basic information.
+        
+        Returns:
+            str: JSON string containing list of models with id, name, and description
+        """
+        return vc.list_models()
+    
     @kernel_function(
         description="Given a user query, predicts which members in an OLAP cube are relevant to the query",
         name="get_member_prediction"
@@ -39,12 +68,20 @@ def get_orchestration_agent():
         <task>
         You are a helpful assistant that routes user queries to the appropriate agent.
         </task>
-        <tips>
-        - If don't know which model to use yet, start with the get_member_prediction function
-        - If you don't know which members to use yet, start with the get_member_prediction function
-        - If you have a list of members, use the generate_mql function to generate the appropriate Vena MQL
-        - If the user asks any follow up questions, clarify if they'd like to use the same model, members, or MQL first
-        </tips>
+        
+        <instructions>
+        Phase 1: Model Selection
+        1. First, you should determine which model the user is asking about. Use the list_models() function to get a list of all available models.
+        2. If there are multiple models that seem relevant, clarify with the user.  Once a SINGLE model is selected, you can move on to the next step.
+        3. You can use the get_model_info(model_id: int) function to get dimension information about a specific model.
+        
+        Phase 2: Member Prediction
+        4. If you don't know which members to use yet, start with the get_member_prediction function
+        
+        Phase 3: MQL Generation
+        5. If you have a list of members, use the generate_mql function to generate the appropriate Vena MQL
+        6. If the user asks any follow up questions, clarify if they'd like to use the same model, members, or MQL first
+        </instructions>
         """,
         plugins=[OrchestrationPlugin()]
     )

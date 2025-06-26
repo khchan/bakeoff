@@ -88,3 +88,16 @@ def search_members(model_id: int, dimension_id: int, query: str) -> str:
         raise Exception(f"Error: Received status code {response.status_code}. Message: {response.text}")
     
     return response.json()
+
+def validate_mql(model_id: int, mql: str) -> str:
+    header = get_header(os.environ.get("VENA_USER"), os.environ.get("VENA_KEY"))
+    response = requests.post(
+        f'{os.environ.get("VENA_ENDPOINT")}/api/models/{model_id}/mql/validate',
+        headers=header,
+        data=mql
+    )
+    
+    if response.status_code == 204 or response.status_code == 200:
+        return "MQL is valid"
+    else:
+        raise Exception("MQL is NOT VALID due to: " + response.text + ".  Try searching for members again then generating the MQL.")
