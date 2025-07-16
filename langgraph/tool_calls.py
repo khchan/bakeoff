@@ -1,10 +1,7 @@
 import json
 import os
-import sys
 from typing import Dict, Any, List
-# Add the utils directory to the path to import vena_client
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'utils'))
-import vena_client as vc
+from utils import vena_client as vc
 
 async def make_tool_call(name: str, args: Dict[str, Any]) -> Dict[str, Any]:
     """Make a tool call and return structured information for UI display"""

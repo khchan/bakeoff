@@ -1,9 +1,4 @@
-import sys
-import os
-
-# Add the utils directory to the path to import vena_client
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'utils'))
-import vena_client as vc
+from utils import vena_client as vc
 from agents import function_tool
 
 @function_tool

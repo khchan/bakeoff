@@ -1,12 +1,7 @@
 from semantic_kernel.agents import ChatCompletionAgent
 from chat_service import get_chat_service
 from semantic_kernel.functions.kernel_function_decorator import kernel_function
-import sys
-import os
-
-# Add the utils directory to the path to import vena_client
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'utils'))
-import vena_client as vc
+from utils import vena_client as vc
 
 class MQLValidationPlugin:
     @kernel_function(
@@ -30,28 +25,7 @@ def get_mql_agent():
     • Each dimension clause follows the pattern:
         dimension("<Dimension Name>": <Member Expression>)
     • Separate multiple dimension clauses and multiple items inside a clause with a single space.  
-    • If a dimension is omitted the query assumes *all* members of that dimension.  
-    • When defining a Calculated Member, omit the leading dimension("…": …) wrapper and provide only the member expression.
     • You can use the validate_mql(model_id: int, mql: str) function to validate the MQL expression.
-    
-    ### Components you may use
-
-    1. Member — "'Member Name'"
-    2. Attribute — attribute(@'Attribute Name')
-    3. Function — one of:
-    - children(...)
-    - ichildren(...)
-    - descendants(...)
-    - idescendants(...)
-    - bottomlevel(...)
-    - ancestors(...)
-    - iancestors(...)
-    - parents(...)
-    4. Operator — one of:
-    - union(A B C …)
-    - intersection(A B …)
-    - subtract(A B)
-    - not(condition)
 
     ### Function behaviour
     children            → direct children of the member  
@@ -74,7 +48,6 @@ def get_mql_agent():
     dimension('Account': union('5001' '5003'))
     Return: 
     - Within the Account dimension, the member 5001  plus the member 5003.
-    - The members of all other dimensions.
     - This example demonstrates how to pull specific member datasets from one dimension using the union operator.
 
     Example 2: Combined Bottom Levels, two dimensions with exclusion
@@ -83,21 +56,18 @@ def get_mql_agent():
     Return:
     - Within the Account dimension, all members at the bottom level of Assets plus all members at the bottom level of Liabilities.
     - All members of the Period dimension except children of Q1 as well as the member itself.
-    - The members of all other dimensions.
     - This example shows how different criteria may be used on different dimensions.
 
     Example 3: Bottom-level without a given attribute
     dimension('Account': subtract(  bottomlevel('Net Income') attribute(@' Static accounts '))) 
     Return:
     - Within the Account dimension, all members at the bottom level of Net Income, except for members with the attribute Static accounts.
-    - The members of all other dimensions.
     - This is an example of an expression used for a calculated member, where the dimension is omitted and only the member expression is written.
 
     Example 4: Intersection with an exclusion
     dimension('Account': intersection(descendants('Net Income') not(children('Cost of Revenue'))))
     Return:
     - Within the Account dimension, all members that are descendants of Net Income, except for children of Cost of Revenue.
-    - The members of all other dimensions.
     - This example illustrates how the intersection operator can be used as a filter to include all members under a given parent except the children of one of its children. The same could also be achieved with the union and not operators.
     
     ### Expected Output Format

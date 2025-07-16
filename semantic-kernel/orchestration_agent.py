@@ -1,13 +1,11 @@
+from semantic_kernel import Kernel
 from semantic_kernel.functions.kernel_function_decorator import kernel_function
 from mql_agent import get_mql_agent
 from member_prediction_agent import get_member_prediction_agent
 from semantic_kernel.agents import ChatCompletionAgent
 from chat_service import get_chat_service
 import chainlit as cl
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'utils'))
-import vena_client as vc
+from utils import vena_client as vc
 
 class OrchestrationPlugin:
     
@@ -36,7 +34,10 @@ class OrchestrationPlugin:
         return vc.list_models()
     
     @kernel_function(
-        description="Given a user query, predicts which members in an OLAP cube are relevant to the query",
+        description="""
+        Given a user query, predicts which members in an OLAP cube are relevant to the query.
+        DO NOT USE THIS FUNCTION UNTIL YOU KNOW WHICH MODEL THE USER IS ASKING ABOUT.
+        """,
         name="get_member_prediction"
     )
     def get_member_prediction(
@@ -49,10 +50,15 @@ class OrchestrationPlugin:
         return member_prediction_agent.get_response(message=query, thread=thread)
     
     @kernel_function(
-        description="Given a user query and a list of members, generates syntactically-correct Vena MQL",
+        description="""
+        Given a user query, and the result of OrchestrationPlugin-get_member_prediction in the context, generates syntactically-correct Vena MQL.
+        DO NOT USE THIS FUNCTION UNTIL YOU KNOW WHICH MODEL THE USER IS ASKING ABOUT AND HAVE A LIST OF MEMBERS.
+        If you don't have a list of members, or if it seems like the user wants to look for different members, use the get_member_prediction function again.
+        If it seems like the user wants to refer to another model, use the list_models() function to get a list of all available models.
+        """,
         name="generate_mql"
     )
-    def generate_mql(self, query: str, members: str) -> str:
+    def generate_mql(self, query: str, members: list[dict]) -> str:
         thread = cl.user_session.get("thread")
         mql_agent = get_mql_agent()
         cl.SemanticKernelFilter(kernel=mql_agent.kernel)

@@ -1,6 +1,8 @@
 import requests
 import base64
 import os
+import pandas as pd
+import io
 
 def get_header(venaUser, venaKey):
     token = base64.b64encode(f'{venaUser}:{venaKey}'.encode()).decode()
@@ -74,6 +76,24 @@ def get_children_of_member(model_id: int, dimension_number: int, member_id: str)
         for member in data
     ]
     
+def get_member(model_id: int, dimension_number: int, member_id: str) -> str:
+    url = f'{os.environ.get("VENA_ENDPOINT")}/api/models/{model_id}/dimensions/{dimension_number}/members/{member_id}'
+    header = get_header(os.environ.get("VENA_USER"), os.environ.get("VENA_KEY"))
+    response = requests.get(
+        url,
+        headers=header
+    )
+    if response.status_code != 200:
+        raise Exception(f"Error: Received status code {response.status_code}. Message: {response.text}")
+    
+    member = response.json()
+    return {
+        "id": member['id'],
+        "name": member['name'],
+        "alias": member['alias'],
+        "numChildren": member['numChildren']
+    }
+    
 def search_members(model_id: int, dimension_id: int, query: str) -> str:
     header = get_header(os.environ.get("VENA_USER"), os.environ.get("VENA_KEY"))
     response = requests.post(
@@ -101,3 +121,22 @@ def validate_mql(model_id: int, mql: str) -> str:
         return "MQL is valid"
     else:
         raise Exception("MQL is NOT VALID due to: " + response.text + ".  Try searching for members again then generating the MQL.")
+    
+def get_hierarchy(model_id: int) -> pd.DataFrame:
+    header = get_header(os.environ.get("VENA_USER"), os.environ.get("VENA_KEY"))
+    response = requests.post(
+        f'{os.environ.get("VENA_ENDPOINT")}/api/models/{model_id}/etl/query/hierarchies',
+        headers=header,
+        json={
+            "destination": "ToCSV",
+            "exportMemberIds": True,
+            "queryString": None
+        },
+        stream=True
+    )
+    if response.status_code == 204 or response.status_code == 200:
+        content = response.content
+        return pd.read_csv(io.BytesIO(content))
+    else:
+        raise Exception("Failed to retrieve hierarchy CSV due to: " + response.text)
+    

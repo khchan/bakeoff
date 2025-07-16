@@ -1,10 +1,5 @@
-import sys
-import os
 from typing import List, Dict, Any
-
-# Add the utils directory to the path to import vena_client
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'utils'))
-import vena_client as vc
+from utils import vena_client as vc
 
 class VenaTools:
     """Tools for querying and searching Vena model information"""
