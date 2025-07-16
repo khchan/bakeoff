@@ -24,7 +24,7 @@ All implementations follow the same workflow:
 
 ### Vena Integration
 - **Shared Client** (`utils/vena_client.py`) - REST API client for Vena OLAP platform
-- **Key Functions**: `list_models()`, `get_model()`, `get_children_of_member()`, `search_members()`
+- **Key Functions**: `list_models()`, `get_model()`, `get_children_of_member()`, `search_members()`, `get_member()`, `validate_mql()`, `get_hierarchy()`
 
 ### Framework Differences
 - **Semantic Kernel**: Plugin-based with MCP, sequential workflow
@@ -60,7 +60,7 @@ cd openai-agents && chainlit run server.py
 
 ### Testing
 ```bash
-# Run tests (configured for async)
+# Run tests (pytest configured for async - no test files currently present)
 pytest
 
 # Run with coverage
@@ -79,4 +79,28 @@ Copy `.env.example` to `.env` and configure:
 - **Azure Authentication**: `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, `AZURE_TENANT_ID`
 - **Azure OpenAI**: `OPENAI_ENDPOINT`, `OPENAI_DEPLOYMENT_NAME`
 - **Vena API**: `VENA_ENDPOINT`, `VENA_USER`, `VENA_KEY`
+- **Pool Management**: `POOL_MANAGEMENT_ENDPOINT`, `AI_PROJECT_ENDPOINT`
 - **Local Models**: `LOCAL_MODEL_OVERRIDE` (e.g., `qwen3:latest`)
+
+## Project Structure
+
+```
+bakeoff/
+├── agno/                    # Agno implementation
+├── langgraph/              # LangGraph implementation  
+├── notebooks/              # Jupyter notebooks for exploration
+├── openai-agents/          # OpenAI Agents implementation
+├── semantic-kernel/        # Semantic Kernel implementation
+├── utils/                  # Shared utilities
+│   └── vena_client.py     # Vena API client
+├── .env.example           # Environment configuration template
+├── pyproject.toml         # Poetry dependencies and configuration
+└── CLAUDE.md              # This file
+```
+
+## Dependencies
+
+- Python: `>=3.10,<3.13`
+- Poetry for dependency management
+- Chainlit for UI across all implementations
+- Framework-specific dependencies as listed in `pyproject.toml`
